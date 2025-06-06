@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:expense_tracker_app/models/category.dart';
 import 'package:uuid/uuid.dart';
 
 const uuid = Uuid();
