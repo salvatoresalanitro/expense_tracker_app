@@ -1,11 +1,14 @@
 import 'package:expense_tracker_app/models/category.dart';
+import 'package:expense_tracker_app/models/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 final _formatter = DateFormat('dd MMMM yyyy', 'it_IT');
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({super.key, required this.onAddExpense});
+
+  final void Function(Expense expense) onAddExpense;
 
   @override
   State<StatefulWidget> createState() {
@@ -53,9 +56,7 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _submitExpenseData() {
-    final enteredAmount = double.tryParse(
-      _amountController.text,
-    );
+    final enteredAmount = double.tryParse(_amountController.text);
     final isAmountInvalid =
         enteredAmount == null || enteredAmount <= 0;
 
@@ -64,21 +65,31 @@ class _NewExpenseState extends State<NewExpense> {
         _selectedDate == null) {
       showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
-          title: Text('Invalid input'),
-          content: Text(
-            'Please make sure a valid title, amount, date and category was entered.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Ok'),
-            )
-          ],
-        ),
+        builder:
+            (ctx) => AlertDialog(
+              title: Text('Invalid input'),
+              content: Text(
+                'Please make sure a valid title, amount, date and category was entered.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('Ok'),
+                ),
+              ],
+            ),
       );
       return;
     }
+
+    final expenseToBeAdded = Expense(
+      title: _titleController.text,
+      amount: enteredAmount,
+      date: _selectedDate!,
+      category: _selectedCategory,
+    );
+
+    widget.onAddExpense(expenseToBeAdded);
   }
 
   @override
