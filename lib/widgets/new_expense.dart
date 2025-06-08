@@ -43,13 +43,42 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _onChangeCategory(Category? category) {
-    if(category == null) {
+    if (category == null) {
       return;
     }
 
     setState(() {
-        _selectedCategory = category;
+      _selectedCategory = category;
     });
+  }
+
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(
+      _amountController.text,
+    );
+    final isAmountInvalid =
+        enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        isAmountInvalid ||
+        _selectedDate == null) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Invalid input'),
+          content: Text(
+            'Please make sure a valid title, amount, date and category was entered.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Ok'),
+            )
+          ],
+        ),
+      );
+      return;
+    }
   }
 
   @override
@@ -110,18 +139,25 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
-          const SizedBox(height: 16,),
+          const SizedBox(height: 16),
           Row(
             children: [
               DropdownButton(
                 value: _selectedCategory,
-                items: Category.values.map(
-                  (category) => DropdownMenuItem(
-                    value: category,
-                    child: Text(category.name.toUpperCase()),
-                  ),
-                ).toList(),
-                onChanged: (category) => _onChangeCategory(category),
+                items:
+                    Category.values
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(
+                              category.name.toUpperCase(),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                onChanged:
+                    (category) =>
+                        _onChangeCategory(category),
               ),
               const Spacer(),
               TextButton(
@@ -129,10 +165,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(_titleController.text);
-                  print(_amountController.text);
-                },
+                onPressed: _submitExpenseData,
                 child: Text('Save expense'),
               ),
             ],
