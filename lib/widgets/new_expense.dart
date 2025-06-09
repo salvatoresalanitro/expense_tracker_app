@@ -148,6 +148,7 @@ class _NewExpenseState extends State<NewExpense> {
               ),
               child: Column(
                 children: [
+                  //ToDo: refactor this code to reuse widgets and avoid duplicate code
                   if (maxWidthScreen >= 600)
                     Row(
                       crossAxisAlignment:
